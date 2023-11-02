@@ -5,8 +5,12 @@ on:
     branches:
       - main
 
+env:
+  IMAGE_NAME: "levanidus/gowebserver"
+  CONTAINER_NAME: "gowebserver"      
+
 jobs:
-  build:
+  build_and_push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,4 +25,33 @@ jobs:
         run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/gowebserver
 
       - name: Docker Push
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/gowebserver      
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/gowebserver 
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    needs: build_and_push
+
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            # Login into Digital Ocean Registry
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_GOWEBSERVER_TOKEN }} 
+
+            # Stop running container
+            docker stop $(echo $CONTAINER_NAME)
+
+            # Remove old container
+            docker rm $(echo $CONTAINER_NAME)
+
+            # Run a new container from a new image
+            docker run  -d \
+            --restart always \
+            --publish 8080:8080 \
+            --name $(echo $CONTAINER_NAME) \
+            $(echo $IMAGE_NAME)           
