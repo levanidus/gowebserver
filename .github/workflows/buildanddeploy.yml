@@ -7,7 +7,7 @@ on:
 
 env:
   IMAGE_NAME: "levanidus/gowebserver"
-  CONTAINER_NAME: "gowebserver"      
+  CONTAINER_NAME: "gowebserver_container"      
 
 jobs:
   build_and_push:
@@ -39,6 +39,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
+          envs: IMAGE_NAME,CONTAINER_NAME
           script: |
             # Login into Docker hub
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_GOWEBSERVER_TOKEN }} 
