@@ -38,9 +38,9 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          port: ${{ secrets.VPS_PORT }}
-          script: |
-            # Login into Digital Ocean Registry
+          port: 22
+          script: 
+            # Login into Docker hub
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_GOWEBSERVER_TOKEN }} 
 
             # Stop running container
