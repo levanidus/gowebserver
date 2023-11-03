@@ -22,10 +22,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_GOWEBSERVER_TOKEN }}
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/gowebserver
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/gowebserver:$(echo $GITHUB_SHA | head -c7) .
 
       - name: Docker Push
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/gowebserver 
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/gowebserver:$(echo $GITHUB_SHA | head -c7) 
   deploy:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
@@ -55,4 +55,4 @@ jobs:
             --restart always \
             --publish 8080:8080 \
             --name $(echo $CONTAINER_NAME) \
-            $(echo $IMAGE_NAME)           
+            ${{ secrets.DOCKERHUB_USERNAME }}/gowebserver:$(echo $GITHUB_SHA | head -c7)           
