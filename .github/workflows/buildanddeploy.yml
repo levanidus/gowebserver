@@ -54,4 +54,5 @@ jobs:
             docker run  -d \
             --restart always \
             --publish 8080:8080 \
-            --name $(echo $CONTAINER_NAME) ${{ secrets.DOCKERHUB_USERNAME }}/gowebserver:$(echo $GITHUB_SHA | head -c7)           
+            --name $(echo $CONTAINER_NAME) \
+            ${{ secrets.DOCKERHUB_USERNAME }}/gowebserver:$(echo $GITHUB_SHA | head -c7)           
