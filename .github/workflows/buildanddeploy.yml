@@ -39,7 +39,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
-          envs: IMAGE_NAME,CONTAINER_NAME
+          envs: GITHUB_SHA,CONTAINER_NAME
           script: |
             # Login into Docker hub
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_GOWEBSERVER_TOKEN }} 
